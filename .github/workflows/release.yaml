@@ -78,7 +78,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install Ubuntu deps
-        if: ${{ matrix.platform }} == "linux"
+        if: ${{ matrix.platform == "linux" }}
         #uses: awalsh128/cache-apt-pkgs-action@latest
         #with:
         #  packages: libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
