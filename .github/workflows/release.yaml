@@ -63,8 +63,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - platform: windows
-            runner: windows-latest
+          #- platform: windows
+          #  runner: windows-latest
           - platform: linux
             runner: ubuntu-latest
           - platform: macos
