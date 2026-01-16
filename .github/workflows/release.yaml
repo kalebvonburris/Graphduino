@@ -67,10 +67,13 @@ jobs:
         include:
           - platform: windows
             runner: windows-latest
+            extension: .exe
           - platform: linux
             runner: ubuntu-latest
+            extension: ""
           - platform: macos
             runner: macos-latest
+            extension: ""
     runs-on: ${{ matrix.runner }}
     concurrency: ${{ matrix.platform }}
     steps:
@@ -95,19 +98,23 @@ jobs:
           swift-version: "6.0.0"
 
       - name: Build Binary
-        run: swift build -c release --show-bin-path >> binary_output
+        run: |
+          swift build -c release
+          swift build -c release --show-bin-path >> binary_output
 
       - name: Get Binary Path
         run: |
           echo "BINARY_PATH=$(cat binary_output)" >> $GITHUB_ENV
+
+      - run: ls ${{ env.BINARY_PATH }}
 
       - name: Upload release
         if: ${{ !github.event.act }} # skip during local actions testing
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ env.BINARY_PATH }}
-          asset_name: Graphduino-${{ matrix.platform }}
+          file: ${{ env.BINARY_PATH }}/Graphduino
+          asset_name: Graphduino-${{ matrix.platform }}${{ matrix.extension }}
           release_name: ${{ env.VERSION }}
           tag: ${{ env.VERSION }}
           overwrite: true
