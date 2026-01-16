@@ -99,7 +99,7 @@ jobs:
 
       - name: Build Binary
         run: |
-          swift build -c release
+          swift build -c release --static-swift-stdlib
           swift build -c release --show-bin-path >> binary_output
 
       - name: Get Binary Path
