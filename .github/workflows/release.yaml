@@ -95,7 +95,7 @@ jobs:
           swift-version: "6.0.0"
 
       - name: Build Binary
-        run: swift build -c release --build-path /release --show-bin-path >> binary_output
+        run: swift build -c release --show-bin-path >> binary_output
 
       - name: Get Binary Path
         run: |
