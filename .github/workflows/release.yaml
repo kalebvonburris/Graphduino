@@ -60,11 +60,13 @@ jobs:
   build-binary:
     name: Build Binary Release
     needs: [get-version, create-release]
+    env:
+      VERSION: ${{needs.get-version.outputs.version}}
     strategy:
       matrix:
         include:
-          #- platform: windows
-          #  runner: windows-latest
+          - platform: windows
+            runner: windows-latest
           - platform: linux
             runner: ubuntu-latest
           - platform: macos
@@ -87,9 +89,9 @@ jobs:
           sudo apt install libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
 
       - name: Setup Swift
-        uses: swift-actions/setup-swift@v3
+        uses: SwiftyLab/setup-swift@latest
         with:
-          skip-verify-signature: true
+          #skip-verify-signature: true
           swift-version: "6.0.0"
 
       - name: Build Binary
@@ -104,8 +106,8 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: $BINARY_PATH
+          file: ${{ env.BINARY_PATH }}
           asset_name: Graphduino-${{ matrix.platform }}
           release_name: ${{ env.VERSION }}
-          tag: ${{ needs.get-version.version }}
+          tag: ${{ env.VERSION }}
           overwrite: true
