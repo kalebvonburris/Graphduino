@@ -91,6 +91,12 @@ jobs:
           sudo apt update
           sudo apt install libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
 
+      - name: Install MSVC Tools
+        if: ${{ matrix.platform == 'windows' }}
+        uses: TheMrMilchmann/setup-msvc-dev@v4
+        with:
+          arch: x64
+
       - name: Setup Swift
         uses: SwiftyLab/setup-swift@latest
         with:
