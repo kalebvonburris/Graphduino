@@ -97,6 +97,12 @@ jobs:
         with:
           arch: x64
 
+      - name: Setup Windows SDK
+        if: ${{ matrix.platform == 'windows' }}
+        uses: fbactions/setup-winsdk@v2
+        with:
+          winsdk-build-version: 19041
+
       - name: Setup Swift
         uses: SwiftyLab/setup-swift@latest
         with:
