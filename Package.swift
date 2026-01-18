@@ -6,7 +6,7 @@ let package = Package(
     name: "Graphduino",
     dependencies: [
         .package(url: "https://github.com/STREGAsGate/Raylib", branch: "master"),
-        .package(url: "https://github.com/yeokm1/SwiftSerial", from: "0.1.0")
+        .package(url: "https://github.com/olawlor/SwiftSerial", branch: "main")
     ],
     targets: [
         .executableTarget(

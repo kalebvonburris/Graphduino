@@ -7,7 +7,7 @@
  by Dr. Orion Lawlor and Gemini 3 Thinking, lawlor@alaska.edu, 2026-01-15 (Public Domain)
 */
 import Foundation
-@preconcurrency import SwiftSerial // from https://github.com/yeokm1/SwiftSerial
+import SwiftSerial // from https://github.com/olawlor/SwiftSerial
 
 // 'final' helps performance, '@unchecked Sendable' because we do our own locking
 final class ArduinoBridge : @unchecked Sendable {
@@ -23,24 +23,25 @@ final class ArduinoBridge : @unchecked Sendable {
         do {
             try serialPort.openPort()
             let port = serialPort
-            port.setSettings(receiveRate: .baud9600, transmitRate: .baud9600, minimumBytesToRead: 1)
+            try port.setSettings(baudRateSetting: .symmetrical(.baud9600), minimumBytesToRead: 1)
+			print("Successfully opened serial port");
             
-            // Run the listening loop in the background
-            Thread.detachNewThread {
-                var buffer = ""
-                while true { // keep reading serial data forever
-                    if let char = try? port.readString(ofLength: 1) {
-                        if char == "\n" || char=="\r" {
-                            if buffer.count>0 {
-                                self.parseLine(buffer)
-                            }
-                            buffer = ""
-                        } else {
-                            buffer += char
-                        }
-                    }
-                }
-            }
+			Task {
+				do {
+					// This yields a full String every time a newline is detected
+					for await line in try port.asyncLines() {
+						// Trim whitespace/carriage returns if your device sends \r\n
+						let cleanLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
+						print("Received serial line: \(cleanLine)");
+						
+						if !cleanLine.isEmpty {
+							self.parseLine(cleanLine)
+						}
+					}
+				} catch {
+					print("Serial stream encountered an error: \(error)")
+				}
+			}
         } catch {
             print("\n\nERROR on serial port: \(error)\n\n")
         }
