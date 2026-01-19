@@ -4,6 +4,9 @@ import PackageDescription
 
 let package = Package(
     name: "Graphduino",
+    platforms: [
+		.macOS(.v10_15), // needed for async in SwiftSerial
+	],
     dependencies: [
         .package(url: "https://github.com/STREGAsGate/Raylib", branch: "master"),
         .package(url: "https://github.com/olawlor/SwiftSerial", branch: "main")
