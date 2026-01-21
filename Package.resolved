@@ -1,5 +1,5 @@
 {
-  "originHash" : "f4159af2b761da598a3b3df70c5bed5c42e5bedafcf2bc848b695205f2050e51",
+  "originHash" : "faf93d8b585b74a199a5614b9909743d4140fab8fbe4d269e935b03d3842cefe",
   "pins" : [
     {
       "identity" : "raylib",
@@ -11,12 +11,21 @@
       }
     },
     {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser.git",
+      "state" : {
+        "revision" : "46989693916f56d1186bd59ac15124caef896560",
+        "version" : "1.3.1"
+      }
+    },
+    {
       "identity" : "swiftserial",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/yeokm1/SwiftSerial",
+      "location" : "https://github.com/olawlor/SwiftSerial",
       "state" : {
-        "revision" : "0e824cc38c6802e69543d0c1406d34babfd68e2e",
-        "version" : "0.1.2"
+        "branch" : "main",
+        "revision" : "21729aebee52157c8a0fd5953028552e54734f60"
       }
     }
   ],

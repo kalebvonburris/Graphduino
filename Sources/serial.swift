@@ -7,40 +7,44 @@
  by Dr. Orion Lawlor and Gemini 3 Thinking, lawlor@alaska.edu, 2026-01-15 (Public Domain)
 */
 import Foundation
-@preconcurrency import SwiftSerial // from https://github.com/yeokm1/SwiftSerial
+import SwiftSerial // from https://github.com/olawlor/SwiftSerial
 
 // 'final' helps performance, '@unchecked Sendable' because we do our own locking
 final class ArduinoBridge : @unchecked Sendable {
+	public let verbose : Bool
     private let serialPort: SerialPort
     private var sensorValues: [Float] = []
     private let lock = NSLock() // synchronizes sensorValues array access
 
-    init(path: String) {
+    init(path: String, verbose: Bool = false) {
+		self.verbose = verbose
         self.serialPort = SerialPort(path: path)
+		if (verbose) { print("Serial port path: '\(path)'") }
     }
 
     func startListening() {
         do {
             try serialPort.openPort()
             let port = serialPort
-            port.setSettings(receiveRate: .baud9600, transmitRate: .baud9600, minimumBytesToRead: 1)
+            try port.setSettings(baudRateSetting: .symmetrical(.baud9600), minimumBytesToRead: 1, timeout:1)
+			if (verbose) { print("Successfully opened serial port") }
             
-            // Run the listening loop in the background
-            Thread.detachNewThread {
-                var buffer = ""
-                while true { // keep reading serial data forever
-                    if let char = try? port.readString(ofLength: 1) {
-                        if char == "\n" || char=="\r" {
-                            if buffer.count>0 {
-                                self.parseLine(buffer)
-                            }
-                            buffer = ""
-                        } else {
-                            buffer += char
-                        }
-                    }
-                }
-            }
+			Task {
+				do {
+					// This yields a full String every time a newline is detected
+					for await line in try port.asyncLines() {
+						// Trim whitespace/carriage returns if your device sends \r\n
+						let cleanLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
+						if (verbose) { print("  Serial data: \(cleanLine)") }
+						
+						if !cleanLine.isEmpty {
+							self.parseLine(cleanLine)
+						}
+					}
+				} catch {
+					print("Serial stream encountered an error: \(error)")
+				}
+			}
         } catch {
             print("\n\nERROR on serial port: \(error)\n\n")
         }
